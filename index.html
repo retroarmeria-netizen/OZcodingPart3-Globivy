@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Globivy — 해외 이민 & 비자 플랫폼</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --color-primary: #2F80ED;
+  --color-mint: #3DD6C6;
+  --color-primary-dark: #1A5CB8;
+  --color-bg: #F4F8FF;
+  --color-surface: #FFFFFF;
+  --color-text-main: #1A1A1A;
+  --color-text-sub: #666666;
+  --color-divider: #E0E0E0;
+  --color-danger: #EB5757;
+  --color-warning: #F2C94C;
+  --color-success: #27AE60;
+  --shadow-subtle: 0 4px 12px rgba(0,0,0,0.05);
+  --shadow-card: 0 8px 16px rgba(47,128,237,0.08);
+  --glass-bg: rgba(255,255,255,0.7);
+  --glass-border: rgba(255,255,255,0.3);
+  --radius-card: 20px;
+  --radius-chip: 12px;
+  --radius-full: 9999px;
+  --max-width: 430px;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: #e0e7f3;
+  color: var(--color-text-main);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.app-container {
+  width: 100%;
+  max-width: var(--max-width);
+  height: 100vh;
+  background-color: var(--color-bg);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 0 60px rgba(0,0,0,0.15);
+}
+
+/* ===================== ONBOARDING ===================== */
+#onboardingView {
+  position: absolute; inset: 0; z-index: 500;
+  background: var(--color-surface);
+  display: flex; flex-direction: column;
+}
+
+.ob-slides {
+  flex: 1; position: relative; overflow: hidden;
+}
+
+.ob-slide {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 40px 32px 20px;
+  opacity: 0; transform: translateX(60px);
+  transition: all 0.45s cubic-bezier(0.16,1,0.3,1);
+  pointer-events: none;
+}
+.ob-slide.active {
+  opacity: 1; transform: translateX(0);
+  pointer-events: auto;
+}
+.ob-slide.out {
+  opacity: 0; transform: translateX(-60px);
+}
+
+.ob-illustration {
+  width: 240px; height: 240px;
+  border-radius: 40px;
+  margin-bottom: 36px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 96px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.ob-illustration::before {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: 40px;
+}
+.ob-slide:nth-child(1) .ob-illustration { background: linear-gradient(135deg, #E3F2FD, #E0F7FA); }
+.ob-slide:nth-child(2) .ob-illustration { background: linear-gradient(135deg, #F3E5F5, #EDE7F6); }
+.ob-slide:nth-child(3) .ob-illustration { background: linear-gradient(135deg, #E8F5E9, #F1F8E9); }
+
+.ob-tag {
+  font-size: 11px; font-weight: 700;
+  color: var(--color-primary);
+  background: rgba(47,128,237,0.1);
+  padding: 5px 14px; border-radius: 20px;
+  margin-bottom: 14px; letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.ob-title {
+  font-size: 26px; font-weight: 800;
+  text-align: center; line-height: 1.3;
+  margin-bottom: 14px; letter-spacing: -0.3px;
+}
+.ob-desc {
+  font-size: 15px; color: var(--color-text-sub);
+  text-align: center; line-height: 1.65;
+  max-width: 300px;
+}
+
+.ob-footer {
+  padding: 20px 32px 36px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+
+.ob-dots {
+  display: flex; justify-content: center; gap: 6px; margin-bottom: 4px;
+}
+.ob-dot {
+  width: 6px; height: 6px; border-radius: 3px;
+  background: var(--color-divider);
+  transition: all 0.3s ease;
+}
+.ob-dot.active { width: 20px; background: var(--color-primary); }
+
+.ob-btn-primary {
+  width: 100%; padding: 17px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-mint));
+  color: white; border: none; border-radius: 16px;
+  font-size: 16px; font-weight: 700;
+  font-family: inherit; cursor: pointer;
+  box-shadow: 0 8px 20px rgba(47,128,237,0.25);
+  transition: all 0.2s;
+}
+.ob-btn-primary:active { transform: scale(0.98); }
+
+.ob-btn-skip {
+  background: none; border: none;
+  font-size: 14px; font-weight: 600;
+  color: var(--color-text-sub); cursor: pointer;
+  font-family: inherit; padding: 6px;
+  align-self: center;
+}
+
+/* ===================== LOGIN ===================== */
+#loginView {
+  position: absolute; inset: 0; z-index: 400;
+  background: var(--color-surface);
+  display: flex; flex-direction: column;
+  overflow-y: auto; scrollbar-width: none;
+}
+#loginView::-webkit-scrollbar { display: none; }
+
+.login-hero {
+  background: linear-gradient(160deg, var(--color-primary), var(--color-mint));
+  padding: 64px 32px 48px;
+  display: flex; flex-direction: column; align-items: center;
+  position: relative; overflow: hidden;
+}
+.login-hero::before {
+  content: '';
+  position: absolute; width: 300px; height: 300px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  top: -80px; right: -80px;
+}
+.login-hero::after {
+  content: '';
+  position: absolute; width: 200px; height: 200px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  bottom: -40px; left: -40px;
+}
+.login-logo {
+  font-size: 32px; font-weight: 800; color: white;
+  letter-spacing: -1px; margin-bottom: 6px;
+  position: relative; z-index: 1;
+}
+.login-logo span { opacity: 0.7; font-weight: 400; }
+.login-tagline {
+  font-size: 14px; color: rgba(255,255,255,0.85);
+  text-align: center; line-height: 1.5;
+  position: relative; z-index: 1;
+}
+.login-globe { font-size: 64px; margin-bottom: 16px; position: relative; z-index: 1; }
+
+.login-body {
+  flex: 1; padding: 32px 24px 40px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+
+.login-title {
+  font-size: 22px; font-weight: 800;
+  margin-bottom: 8px; letter-spacing: -0.3px;
+}
+.login-sub {
+  font-size: 14px; color: var(--color-text-sub);
+  margin-bottom: 12px; line-height: 1.5;
+}
+
+.login-btn {
+  width: 100%; padding: 16px 20px;
+  border-radius: 14px; border: none;
+  font-size: 15px; font-weight: 700;
+  font-family: inherit; cursor: pointer;
+  display: flex; align-items: center; gap: 12px;
+  transition: all 0.2s; position: relative;
+}
+.login-btn:active { transform: scale(0.98); }
+.login-btn__icon {
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+
+/* Kakao */
+.login-btn--kakao {
+  background: #FEE500; color: #191919;
+  box-shadow: 0 4px 12px rgba(254,229,0,0.3);
+}
+/* Google */
+.login-btn--google {
+  background: white; color: #1A1A1A;
+  box-shadow: var(--shadow-subtle);
+  border: 1px solid var(--color-divider);
+}
+/* Apple */
+.login-btn--apple {
+  background: #1A1A1A; color: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+/* Guest */
+.login-btn--guest {
+  background: var(--color-bg); color: var(--color-text-sub);
+  border: 1.5px dashed var(--color-divider);
+}
+
+.login-divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 4px 0;
+}
+.login-divider::before, .login-divider::after {
+  content: ''; flex: 1; height: 1px;
+  background: var(--color-divider);
+}
+.login-divider span {
+  font-size: 12px; color: var(--color-text-sub); font-weight: 500;
+}
+
+.login-terms {
+  font-size: 11px; color: var(--color-text-sub);
+  text-align: center; line-height: 1.6;
+  margin-top: 8px;
+}
+.login-terms a { color: var(--color-primary); font-weight: 600; text-decoration: none; }
+
+/* ===================== MAIN APP ===================== */
+#mainApp { display: none; flex-direction: column; height: 100%; }
+#mainApp.visible { display: flex; }
+
+.screen-content {
+  flex: 1; overflow-y: auto; padding-bottom: 110px;
+  scrollbar-width: none;
+}
+.screen-content::-webkit-scrollbar { display: none; }
+
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* TAB BAR */
+.tab-bar {
+  position: absolute; bottom: 20px; left: 20px; right: 20px;
+  height: 70px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+  border: 1px solid var(--glass-border);
+  border-radius: 25px;
+  display: flex; justify-content: space-around; align-items: center;
+  padding: 0 8px;
+  box-shadow: var(--shadow-subtle); z-index: 1000;
+}
+.tab-bar__item {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 4px;
+  cursor: pointer; transition: transform 0.2s ease;
+  flex: 1; position: relative;
+}
+.tab-bar__item:active { transform: scale(0.9); }
+.tab-bar__icon { font-size: 22px; }
+.tab-bar__label { font-size: 10px; font-weight: 600; color: var(--color-text-sub); }
+.tab-bar__item--active .tab-bar__label { color: var(--color-primary); }
+.tab-bar__dot {
+  width: 4px; height: 4px;
+  background: var(--color-primary); border-radius: 50%;
+  margin-top: 2px; opacity: 0;
+}
+.tab-bar__item--active .tab-bar__dot { opacity: 1; }
+.tab-bar__badge {
+  position: absolute; top: 0; right: 20%;
+  width: 6px; height: 6px;
+  background: var(--color-danger); border-radius: 50%;
+}
+
+/* HERO */
+.hero {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-mint));
+  padding: 56px 24px 32px; color: white;
+}
+.hero__greeting { font-size: 14px; opacity: 0.9; margin-bottom: 4px; }
+.hero__title { font-size: 20px; font-weight: 700; margin-bottom: 20px; }
+.glass-search {
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 14px; padding: 12px 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.glass-search__input {
+  background: transparent; border: none;
+  color: white; font-family: inherit; font-size: 14px;
+  width: 100%; outline: none;
+}
+.glass-search__input::placeholder { color: rgba(255,255,255,0.7); }
+
+/* FILTER ROW */
+.filter-row {
+  display: flex; gap: 10px; overflow-x: auto;
+  padding: 20px 24px; scrollbar-width: none;
+}
+.filter-row::-webkit-scrollbar { display: none; }
+.filter-chip {
+  padding: 10px 18px; background: white;
+  border-radius: var(--radius-chip);
+  font-size: 14px; font-weight: 600;
+  color: var(--color-text-sub); white-space: nowrap;
+  box-shadow: var(--shadow-subtle); cursor: pointer;
+  border: none; font-family: inherit; transition: all 0.2s;
+  flex-shrink: 0;
+}
+.filter-chip--active { background: var(--color-primary); color: white; }
+
+/* SECTION HEADER */
+.section-header {
+  padding: 0 24px 16px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.section-header__title { font-size: 18px; font-weight: 700; color: var(--color-text-main); }
+.section-header__more { font-size: 12px; color: var(--color-primary); font-weight: 600; cursor: pointer; }
+
+/* BANNER */
+.banner {
+  margin: 0 24px 24px;
+  background: linear-gradient(90deg, #E3F2FD, #E0F7FA);
+  border-radius: 16px; padding: 16px 20px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.banner__content { flex: 1; }
+.banner__title { font-size: 14px; font-weight: 700; color: var(--color-primary-dark); margin-bottom: 2px; }
+.banner__text { font-size: 12px; color: var(--color-text-sub); }
+.banner__icon { font-size: 32px; }
+
+/* NOTICE */
+.notice-banner {
+  margin: 0 24px 16px;
+  background: #E3F2FD; border: 1px solid #BBDEFB;
+  border-radius: 14px; padding: 12px 16px;
+  font-size: 12px; color: #1565C0;
+  display: flex; gap: 8px; align-items: flex-start; line-height: 1.5;
+}
+
+/* ===================== COUNTRY CARDS (with symbols) ===================== */
+.country-scroll {
+  display: flex; gap: 14px; overflow-x: auto;
+  padding: 0 24px 24px; scrollbar-width: none;
+}
+.country-scroll::-webkit-scrollbar { display: none; }
+
+.country-card {
+  min-width: 120px;
+  background: white; border-radius: var(--radius-card);
+  padding: 16px 12px 14px;
+  box-shadow: var(--shadow-card);
+  display: flex; flex-direction: column;
+  align-items: center; gap: 0;
+  cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+  flex-shrink: 0; position: relative; overflow: hidden;
+}
+.country-card:hover { transform: translateY(-4px); box-shadow: 0 14px 28px rgba(47,128,237,0.18); }
+.country-card:active { transform: scale(0.97); }
+
+/* Country flag big */
+.country-card__flag { font-size: 40px; line-height: 1; margin-bottom: 8px; }
+
+/* Symbol icon area */
+.country-card__symbol {
+  width: 52px; height: 52px;
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; margin-bottom: 10px;
+  position: relative;
+}
+
+.country-card__name {
+  font-size: 13px; font-weight: 700;
+  text-align: center; color: var(--color-text-main);
+  margin-bottom: 6px;
+}
+.country-card__visa-wrap {
+  display: flex; flex-wrap: wrap; gap: 3px; justify-content: center;
+}
+.country-card__badge {
+  font-size: 9px; font-weight: 700;
+  padding: 2px 6px; border-radius: 5px;
+}
+
+/* Symbol color themes */
+.sym--au { background: linear-gradient(135deg,#E3F2FD,#BBDEFB); }
+.sym--us { background: linear-gradient(135deg,#FFEBEE,#FFCDD2); }
+.sym--jp { background: linear-gradient(135deg,#FCE4EC,#F8BBD9); }
+.sym--cn { background: linear-gradient(135deg,#FFEBEE,#FFCDD2); }
+.sym--ca { background: linear-gradient(135deg,#E8F5E9,#C8E6C9); }
+.sym--nz { background: linear-gradient(135deg,#E3F2FD,#B3E5FC); }
+.sym--de { background: linear-gradient(135deg,#F5F5F5,#EEEEEE); }
+.sym--gb { background: linear-gradient(135deg,#E3F2FD,#BBDEFB); }
+.sym--ie { background: linear-gradient(135deg,#E8F5E9,#C8E6C9); }
+.sym--sg { background: linear-gradient(135deg,#FFEBEE,#FFCDD2); }
+.sym--fr { background: linear-gradient(135deg,#E3F2FD,#EDE7F6); }
+
+/* RANKING */
+.ranking-list {
+  padding: 0 24px; display: flex; flex-direction: column; gap: 14px;
+}
+.ranking-item {
+  display: flex; align-items: center; gap: 14px;
+  background: white; padding: 16px; border-radius: 18px;
+  box-shadow: var(--shadow-subtle); cursor: pointer; transition: transform 0.2s;
+}
+.ranking-item:hover { transform: translateX(4px); }
+.ranking-item__rank {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: var(--color-bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; color: var(--color-primary); flex-shrink: 0;
+}
+.ranking-item__rank--gold { background: #FFF8E1; color: #F9A825; }
+.ranking-item__rank--silver { background: #F5F5F5; color: #757575; }
+.ranking-item__rank--bronze { background: #FBE9E7; color: #BF360C; }
+.ranking-item__flag { font-size: 26px; flex-shrink: 0; }
+.ranking-item__info { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.ranking-item__header { display: flex; justify-content: space-between; align-items: center; }
+.ranking-item__name { font-size: 14px; font-weight: 700; }
+.ranking-item__score { font-size: 14px; font-weight: 700; color: var(--color-primary); }
+.ranking-item__bar-bg { width: 100%; height: 5px; background: #F0F4F8; border-radius: 3px; overflow: hidden; }
+.ranking-item__bar-fill { height: 100%; background: linear-gradient(90deg, var(--color-primary), var(--color-mint)); border-radius: 3px; }
+.ranking-item__tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.tag-badge { padding: 3px 8px; background: #F4F8FF; color: var(--color-primary); font-size: 10px; font-weight: 700; border-radius: 6px; }
+.tag-badge--wh { background: #FFF8E1; color: #E65100; }
+.tag-badge--pr { background: #E8F5E9; color: #2E7D32; }
+.tag-badge--work { background: #E3F2FD; color: #1565C0; }
+.tag-badge--student { background: #F3E5F5; color: #6A1B9A; }
+
+/* COUNTRY DETAIL */
+.country-hero {
+  min-height: 220px; padding: 52px 24px 24px;
+  color: white;
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+.country-hero__back {
+  font-size: 14px; font-weight: 600;
+  display: flex; align-items: center; gap: 6px;
+  cursor: pointer; margin-bottom: 16px;
+  background: none; border: none; color: white;
+  font-family: inherit; opacity: 0.9;
+}
+.country-hero__flag { font-size: 44px; margin-bottom: 8px; }
+.country-hero__title { font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+.country-hero__sub { font-size: 14px; opacity: 0.85; margin-bottom: 14px; }
+.country-hero__badges { display: flex; gap: 8px; flex-wrap: wrap; }
+.pill {
+  padding: 6px 14px; background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(5px); border-radius: 99px;
+  font-size: 11px; font-weight: 700; border: 1px solid rgba(255,255,255,0.35);
+}
+
+.sticky-nav {
+  position: sticky; top: 0; background: var(--color-bg);
+  padding: 14px 24px; display: flex; gap: 20px;
+  overflow-x: auto; scrollbar-width: none; z-index: 10;
+  border-bottom: 1px solid var(--color-divider);
+}
+.sticky-nav::-webkit-scrollbar { display: none; }
+.sticky-nav__item {
+  font-size: 14px; font-weight: 600; color: var(--color-text-sub);
+  white-space: nowrap; cursor: pointer; padding-bottom: 8px;
+  border-bottom: 3px solid transparent; transition: all 0.2s;
+}
+.sticky-nav__item--active { color: var(--color-text-main); border-bottom-color: var(--color-primary); }
+
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 20px 24px; }
+.info-card {
+  background: white; padding: 16px; border-radius: 18px;
+  display: flex; flex-direction: column; gap: 4px;
+  box-shadow: var(--shadow-subtle);
+}
+.info-card--wide { grid-column: span 2; }
+.info-card__icon { font-size: 22px; margin-bottom: 6px; }
+.info-card__label { font-size: 11px; color: var(--color-text-sub); font-weight: 700; }
+.info-card__value { font-size: 18px; font-weight: 700; color: var(--color-text-main); }
+
+/* Visa items */
+.visa-list { padding: 0 24px 8px; display: flex; flex-direction: column; gap: 14px; }
+.visa-item { padding: 18px; background: white; border-radius: 18px; box-shadow: var(--shadow-subtle); }
+.visa-item__header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.visa-item__name { font-size: 15px; font-weight: 700; flex: 1; display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; }
+.visa-item__status { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px; white-space: nowrap; margin-left: 8px; flex-shrink: 0; }
+.status--active { background: #E8F5E9; color: #2E7D32; }
+.status--limited { background: #FFF3E0; color: #EF6C00; }
+.visa-item__desc { font-size: 13px; color: var(--color-text-sub); line-height: 1.55; margin-bottom: 14px; }
+.visa-item__meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.meta-box { background: var(--color-bg); border-radius: 10px; padding: 10px 12px; }
+.meta-box__label { font-size: 10px; color: var(--color-text-sub); font-weight: 600; margin-bottom: 2px; }
+.meta-box__value { font-size: 13px; font-weight: 700; color: var(--color-text-main); }
+.dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+.dot--green { background: var(--color-success); }
+.dot--blue { background: var(--color-primary); }
+.dot--yellow { background: #F2C94C; }
+.dot--mint { background: var(--color-mint); }
+.visa-reqs { margin-top: 14px; border-top: 1px solid #F0F4F8; padding-top: 14px; display: none; }
+.visa-reqs.open { display: block; }
+.req-row {
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: 9px 0; border-bottom: 1px solid #F8F9FA;
+  font-size: 13px; line-height: 1.45;
+}
+.req-row:last-child { border-bottom: none; }
+.req-row__icon { font-size: 15px; flex-shrink: 0; }
+.req-row__text { color: var(--color-text-sub); }
+.req-row__text strong { color: var(--color-text-main); }
+.warning-box {
+  margin-top: 12px; background: #FFF8E1;
+  border: 1px solid #FFE082; border-radius: 12px;
+  padding: 12px 14px; font-size: 12px; color: #795548;
+  line-height: 1.5; display: flex; gap: 8px;
+}
+.expand-btn {
+  width: 100%; margin-top: 12px; padding: 10px;
+  background: var(--color-bg); border: none; border-radius: 10px;
+  font-size: 13px; font-weight: 600; color: var(--color-primary);
+  cursor: pointer; font-family: inherit; transition: background 0.2s;
+}
+.expand-btn:hover { background: #E3EFFD; }
+.cta-button {
+  margin: 24px 24px 8px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-mint));
+  color: white; padding: 18px; border-radius: 16px;
+  text-align: center; font-weight: 700; font-size: 16px;
+  box-shadow: 0 10px 20px rgba(47,128,237,0.2);
+  cursor: pointer; font-family: inherit; border: none;
+  width: calc(100% - 48px); display: block;
+}
+
+/* CHECKLIST */
+.checklist-header { padding: 52px 24px 16px; display: flex; justify-content: space-between; align-items: center; }
+.add-btn {
+  width: 32px; height: 32px; background: var(--color-primary);
+  color: white; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 700; cursor: pointer;
+}
+.progress-card {
+  margin: 0 24px 24px; background: white; border-radius: 20px;
+  padding: 22px 24px; display: flex; align-items: center; gap: 20px;
+  box-shadow: var(--shadow-card);
+}
+.progress-ring { position: relative; width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.progress-ring__circle { width: 70px; height: 70px; transform: rotate(-90deg); }
+.progress-ring__bg { fill: none; stroke: #F0F4F8; stroke-width: 6; }
+.progress-ring__fill { fill: none; stroke: var(--color-primary); stroke-width: 6; stroke-linecap: round; stroke-dasharray: 201; stroke-dashoffset: 201; transition: stroke-dashoffset 0.6s ease; }
+.progress-ring__text { position: absolute; font-size: 15px; font-weight: 800; color: var(--color-primary); }
+.progress-info { flex: 1; }
+.progress-info__title { font-size: 16px; font-weight: 700; margin-bottom: 4px; color: var(--color-text-main); }
+.progress-info__subtitle { font-size: 13px; color: var(--color-text-sub); }
+.checklist-group { margin-bottom: 8px; }
+.checklist-group__title { padding: 8px 24px 10px; font-size: 13px; font-weight: 700; color: var(--color-text-sub); }
+.check-item {
+  margin: 0 24px 10px; background: white; padding: 16px; border-radius: 16px;
+  display: flex; align-items: center; gap: 12px;
+  box-shadow: var(--shadow-subtle); cursor: pointer; transition: all 0.2s;
+}
+.check-item:hover { box-shadow: var(--shadow-card); }
+.check-item__checkbox {
+  width: 22px; height: 22px; border: 2px solid var(--color-divider);
+  border-radius: 6px; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all 0.2s;
+}
+.check-item--checked .check-item__checkbox { background: var(--color-primary); border-color: var(--color-primary); }
+.check-item--checked .check-item__checkbox::after { content: '✓'; color: white; font-size: 13px; font-weight: 700; }
+.check-item--partial .check-item__checkbox { background: var(--color-warning); border-color: var(--color-warning); }
+.check-item--partial .check-item__checkbox::after { content: '−'; color: white; font-size: 16px; font-weight: 800; }
+.check-item__text-group { flex: 1; }
+.check-item__text { font-size: 14px; font-weight: 500; color: var(--color-text-main); }
+.check-item__sub { font-size: 11px; color: var(--color-text-sub); margin-top: 2px; }
+.check-item--checked .check-item__text { text-decoration: line-through; color: var(--color-text-sub); }
+.check-item__tag { padding: 4px 8px; font-size: 10px; font-weight: 700; border-radius: 6px; white-space: nowrap; }
+.tag--required { background: #FFEBEE; color: var(--color-danger); }
+.tag--optional { background: #E8F5E9; color: var(--color-success); }
+.tag--urgent { background: #FFEBEE; color: var(--color-danger); }
+
+/* COMMUNITY */
+.community-header { padding: 52px 24px 0; }
+.community-header__title { font-size: 24px; font-weight: 800; margin-bottom: 16px; color: var(--color-text-main); }
+.segment-tabs { display: flex; padding: 0 24px; gap: 20px; border-bottom: 1px solid var(--color-divider); }
+.segment-tabs__item { padding-bottom: 12px; font-size: 15px; font-weight: 600; color: var(--color-text-sub); position: relative; cursor: pointer; white-space: nowrap; transition: color 0.2s; }
+.segment-tabs__item--active { color: var(--color-primary); }
+.segment-tabs__item--active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: var(--color-primary); border-radius: 3px 3px 0 0; }
+.post-card { margin: 16px 24px; background: white; border-radius: 20px; padding: 20px; box-shadow: var(--shadow-subtle); }
+.post-card__header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.post-card__avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800; color: white; flex-shrink: 0; }
+.post-card__user-info { flex: 1; }
+.post-card__username { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 6px; color: var(--color-text-main); }
+.post-card__country-tag { font-size: 10px; font-weight: 600; padding: 2px 7px; background: #E3F2FD; color: var(--color-primary); border-radius: 5px; }
+.post-card__meta { font-size: 11px; color: var(--color-text-sub); margin-top: 2px; }
+.post-card__title { font-size: 15px; font-weight: 700; margin-bottom: 6px; line-height: 1.4; color: var(--color-text-main); }
+.post-card__text { font-size: 13px; color: var(--color-text-sub); line-height: 1.55; margin-bottom: 14px; }
+.post-card__actions { display: flex; gap: 20px; border-top: 1px solid #F0F4F8; padding-top: 12px; }
+.post-card__action { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--color-text-sub); font-weight: 600; cursor: pointer; }
+.qa-card { margin: 0 24px 14px; background: white; border-radius: 16px; padding: 16px 18px; box-shadow: var(--shadow-subtle); cursor: pointer; }
+.qa-card__badge { display: inline-block; padding: 3px 8px; font-size: 10px; font-weight: 700; border-radius: 5px; margin-bottom: 8px; }
+.qa-card__badge--complete { background: #E8F5E9; color: #2E7D32; }
+.qa-card__badge--waiting { background: #FFF3E0; color: #EF6C00; }
+.qa-card__title { font-size: 14px; font-weight: 600; line-height: 1.4; color: var(--color-text-main); }
+.qa-card__meta { font-size: 11px; color: var(--color-text-sub); margin-top: 6px; }
+
+/* MY PAGE */
+.profile-header {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-mint));
+  padding: 56px 24px 40px; color: white;
+  border-radius: 0 0 30px 30px;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+.profile-header__avatar { width: 80px; height: 80px; border-radius: 50%; background: white; border: 4px solid rgba(255,255,255,0.35); display: flex; align-items: center; justify-content: center; font-size: 40px; }
+.profile-header__name { font-size: 22px; font-weight: 800; }
+.profile-header__handle { font-size: 14px; opacity: 0.8; }
+.profile-header__status { padding: 5px 14px; background: rgba(0,0,0,0.12); border-radius: 20px; font-size: 12px; font-weight: 600; }
+.stats-row { margin: -30px 24px 24px; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.4); border-radius: 20px; padding: 20px; display: grid; grid-template-columns: repeat(4,1fr); box-shadow: var(--shadow-subtle); }
+.stat-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.stat-item__value { font-size: 17px; font-weight: 800; color: var(--color-primary-dark); }
+.stat-item__label { font-size: 10px; color: var(--color-text-sub); font-weight: 600; }
+.settings-group { margin-bottom: 24px; padding: 0 24px; }
+.settings-group__title { font-size: 13px; font-weight: 700; color: var(--color-text-sub); margin-bottom: 12px; }
+.settings-list { background: white; border-radius: 18px; padding: 0 16px; box-shadow: var(--shadow-subtle); }
+.settings-item { padding: 17px 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F0F4F8; cursor: pointer; }
+.settings-item:last-child { border-bottom: none; }
+.settings-item__left { display: flex; align-items: center; gap: 12px; }
+.settings-item__icon { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.icon-blue { background: #E3F2FD; }
+.icon-green { background: #E8F5E9; }
+.icon-yellow { background: #FFF8E1; }
+.icon-red { background: #FFEBEE; }
+.icon-purple { background: #F3E5F5; }
+.settings-item__label { font-size: 15px; font-weight: 500; color: var(--color-text-main); }
+.settings-item__label--danger { color: var(--color-danger); }
+.settings-item__arrow { font-size: 16px; color: var(--color-text-sub); }
+.toggle { width: 44px; height: 24px; background: #E0E0E0; border-radius: 12px; position: relative; cursor: pointer; }
+.toggle--active { background: var(--color-primary); }
+.toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: white; border-radius: 50%; transition: transform 0.2s; }
+.toggle--active::after { transform: translateX(20px); }
+.flag-circle { width: 44px; height: 44px; border-radius: 50%; background: white; box-shadow: var(--shadow-subtle); display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+
+/* ANIMATIONS */
+@keyframes fadeSlideUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+.animate-in { animation: fadeSlideUp 0.38s cubic-bezier(0.16,1,0.3,1) both; }
+.delay-1 { animation-delay: 0.06s; }
+.delay-2 { animation-delay: 0.12s; }
+.delay-3 { animation-delay: 0.18s; }
+.delay-4 { animation-delay: 0.24s; }
+
+@media (max-width: 430px) {
+  body { background-color: var(--color-bg); }
+  .app-container { box-shadow: none; }
+}
+</style>
+</head>
+<body>
+<div class="app-container">
+
+  <!-- ===================== ONBOARDING ===================== -->
+  <div id="onboardingView">
+    <div class="ob-slides">
+      <div class="ob-slide active" id="obSlide0">
+        <div class="ob-illustration">🌏</div>
+        <div class="ob-tag">GLOBIVY</div>
+        <div class="ob-title">해외 이민의 모든 것,<br>한곳에서</div>
+        <div class="ob-desc">워킹홀리데이, 취업비자, 영주권까지 — 각국 공식 이민청 기준 정보를 쉽고 빠르게 확인하세요.</div>
+      </div>
+      <div class="ob-slide" id="obSlide1">
+        <div class="ob-illustration">📋</div>
+        <div class="ob-tag">CHECKLIST</div>
+        <div class="ob-title">비자 준비부터<br>출발까지 완벽하게</div>
+        <div class="ob-desc">서류 준비, 건강검진, 재정 증빙까지 단계별 체크리스트로 하나도 빠짐없이 챙겨드려요.</div>
+      </div>
+      <div class="ob-slide" id="obSlide2">
+        <div class="ob-illustration">💬</div>
+        <div class="ob-tag">COMMUNITY</div>
+        <div class="ob-title">먼저 간 사람들의<br>생생한 후기</div>
+        <div class="ob-desc">호주 농장 후기부터 미국 O-1 비자 성공담까지, 실제 경험자들의 이야기를 만나보세요.</div>
+      </div>
+    </div>
+    <div class="ob-footer">
+      <div class="ob-dots">
+        <div class="ob-dot active" id="dot0"></div>
+        <div class="ob-dot" id="dot1"></div>
+        <div class="ob-dot" id="dot2"></div>
+      </div>
+      <button class="ob-btn-primary" id="obNextBtn" onclick="obNext()">시작하기</button>
+      <button class="ob-btn-skip" onclick="showLogin()">건너뛰기</button>
+    </div>
+  </div>
+
+  <!-- ===================== LOGIN ===================== -->
+  <div id="loginView" style="display:none;">
+    <div class="login-hero">
+      <div class="login-globe">🌍</div>
+      <div class="login-logo">Globi<span>vy</span></div>
+      <div class="login-tagline">해외 이민의 정확한 첫 발걸음<br>지금 바로 시작해보세요</div>
+    </div>
+    <div class="login-body">
+      <div class="login-title">로그인</div>
+      <div class="login-sub">소셜 계정으로 간편하게 시작하세요.<br>가입 즉시 체크리스트와 커뮤니티를 이용할 수 있어요.</div>
+
+      <button class="login-btn login-btn--kakao" onclick="doLogin('kakao')">
+        <div class="login-btn__icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M10 2C5.58 2 2 4.91 2 8.5c0 2.31 1.54 4.33 3.86 5.48L4.9 17.1c-.08.3.23.54.5.37l3.93-2.6c.22.02.44.03.67.03 4.42 0 8-2.91 8-6.5S14.42 2 10 2z" fill="#391B1B"/>
+          </svg>
+        </div>
+        카카오로 시작하기
+      </button>
+
+      <button class="login-btn login-btn--google" onclick="doLogin('google')">
+        <div class="login-btn__icon">
+          <svg width="20" height="20" viewBox="0 0 20 20">
+            <path d="M19.6 10.23c0-.68-.06-1.36-.17-2H10v3.79h5.39c-.23 1.24-.94 2.29-2 2.99v2.49h3.23c1.89-1.74 2.98-4.3 2.98-7.27z" fill="#4285F4"/>
+            <path d="M10 20c2.7 0 4.96-.9 6.61-2.42l-3.23-2.49c-.9.6-2.04.96-3.38.96-2.6 0-4.8-1.75-5.59-4.11H1.08v2.57C2.72 17.76 6.1 20 10 20z" fill="#34A853"/>
+            <path d="M4.41 11.94A5.99 5.99 0 0 1 4.1 10c0-.67.12-1.32.31-1.94V5.49H1.08A9.99 9.99 0 0 0 0 10c0 1.61.39 3.14 1.08 4.51l3.33-2.57z" fill="#FBBC05"/>
+            <path d="M10 3.96c1.47 0 2.79.5 3.82 1.5l2.86-2.86C14.95.99 12.69 0 10 0 6.1 0 2.72 2.24 1.08 5.49l3.33 2.57C5.2 5.71 7.4 3.96 10 3.96z" fill="#EA4335"/>
+          </svg>
+        </div>
+        Google로 시작하기
+      </button>
+
+      <button class="login-btn login-btn--apple" onclick="doLogin('apple')">
+        <div class="login-btn__icon">
+          <svg width="18" height="22" viewBox="0 0 18 22" fill="white">
+            <path d="M15.37 11.56c-.02-2.56 2.1-3.8 2.2-3.86-1.2-1.75-3.06-1.99-3.72-2.02-1.58-.16-3.09.93-3.89.93-.8 0-2.03-.91-3.34-.88C4.89 5.76 3.2 6.83 2.27 8.5.38 11.87 1.75 16.8 3.6 19.5c.92 1.32 2 2.8 3.43 2.75 1.38-.05 1.9-.88 3.57-.88 1.67 0 2.14.88 3.6.85 1.48-.02 2.42-1.35 3.32-2.68.66-.96 1.17-2.04 1.47-3.18-3.23-1.22-3.64-5.77-.62-6.8zM12.9 3.62c.76-.93 1.27-2.2 1.13-3.49-1.1.04-2.42.73-3.2 1.65-.7.81-1.32 2.1-1.15 3.33 1.22.1 2.46-.63 3.22-1.49z"/>
+          </svg>
+        </div>
+        Apple로 시작하기
+      </button>
+
+      <div class="login-divider"><span>또는</span></div>
+
+      <button class="login-btn login-btn--guest" onclick="doLogin('guest')">
+        <div class="login-btn__icon">👤</div>
+        비회원으로 둘러보기
+      </button>
+
+      <div class="login-terms">
+        가입 시 Globivy의 <a href="#">이용약관</a> 및 <a href="#">개인정보처리방침</a>에<br>동의하는 것으로 간주됩니다.
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MAIN APP ===================== -->
+  <div id="mainApp">
+    <div class="screen-content">
+
+      <!-- HOME -->
+      <div id="screen-home" class="screen active">
+        <section class="hero animate-in">
+          <p class="hero__greeting" id="heroGreeting">안녕하세요 👋</p>
+          <h1 class="hero__title">어느 나라로 떠나실 건가요?<br>정확한 정보로 함께합니다</h1>
+          <div class="glass-search">
+            <span>🔍</span>
+            <input class="glass-search__input" type="text" placeholder="국가, 비자 종류 검색..." oninput="filterHome(this.value)">
+          </div>
+        </section>
+
+        <div class="filter-row animate-in delay-1" id="homeFilters">
+          <button class="filter-chip filter-chip--active" onclick="filterHomeVisa('all',this)">전체</button>
+          <button class="filter-chip" onclick="filterHomeVisa('wh',this)">워킹홀리데이</button>
+          <button class="filter-chip" onclick="filterHomeVisa('work',this)">취업비자</button>
+          <button class="filter-chip" onclick="filterHomeVisa('pr',this)">영주권</button>
+          <button class="filter-chip" onclick="filterHomeVisa('student',this)">학생비자</button>
+        </div>
+
+        <div class="notice-banner animate-in delay-1">
+          <span>ℹ️</span>
+          <span>모든 정보는 각국 정부 공식 이민청 기준입니다. 비자 조건은 수시로 변경되니 신청 전 반드시 공식 사이트를 확인하세요.</span>
+        </div>
+
+        <div class="section-header animate-in delay-2">
+          <div class="section-header__title">🌟 인기 국가</div>
+          <div class="section-header__more" onclick="switchTab('country')">모두 보기</div>
+        </div>
+        <div class="country-scroll animate-in delay-2" id="homeScroll"></div>
+
+        <div class="banner animate-in delay-3">
+          <div class="banner__content">
+            <div class="banner__title">워킹홀리데이 신청 시즌 안내</div>
+            <div class="banner__text">호주·일본·뉴질랜드 비자 현황 최신 업데이트</div>
+          </div>
+          <div class="banner__icon">📅</div>
+        </div>
+
+        <div class="section-header animate-in delay-3">
+          <div class="section-header__title">🏆 국가별 인기 순위</div>
+        </div>
+        <div class="ranking-list animate-in delay-4" id="homeRanking"></div>
+        <div style="height:16px;"></div>
+      </div>
+
+      <!-- COUNTRY -->
+      <div id="screen-country" class="screen">
+        <div id="countryListView">
+          <section class="hero animate-in" style="padding-bottom:24px;">
+            <p class="hero__greeting">📋 국가 정보</p>
+            <h1 class="hero__title" style="font-size:18px;">비자 정보를 확인하세요</h1>
+            <div class="glass-search">
+              <span>🔍</span>
+              <input class="glass-search__input" type="text" placeholder="국가 검색..." oninput="filterCountry(this.value)">
+            </div>
+          </section>
+          <div class="filter-row animate-in" id="countryFilters">
+            <button class="filter-chip filter-chip--active" onclick="filterRegion('all',this)">전체</button>
+            <button class="filter-chip" onclick="filterRegion('oceania',this)">오세아니아</button>
+            <button class="filter-chip" onclick="filterRegion('asia',this)">아시아</button>
+            <button class="filter-chip" onclick="filterRegion('america',this)">아메리카</button>
+            <button class="filter-chip" onclick="filterRegion('europe',this)">유럽</button>
+          </div>
+          <div class="section-header animate-in"><div class="section-header__title">🌟 인기 국가 TOP</div></div>
+          <div class="country-scroll animate-in" id="cPopular"></div>
+          <div class="section-header animate-in" style="padding-top:8px;"><div class="section-header__title">🌐 기타 국가</div></div>
+          <div class="country-scroll animate-in" id="cOther"></div>
+          <div class="section-header animate-in" style="padding-top:8px;"><div class="section-header__title">📊 전체 목록</div></div>
+          <div class="ranking-list animate-in" id="cFull" style="padding-bottom:16px;"></div>
+          <div style="height:16px;"></div>
+        </div>
+        <div id="countryDetailView" style="display:none;">
+          <div id="countryDetailContent"></div>
+        </div>
+      </div>
+
+      <!-- CHECKLIST -->
+      <div id="screen-checklist" class="screen">
+        <div id="checklistContent"></div>
+      </div>
+
+      <!-- COMMUNITY -->
+      <div id="screen-community" class="screen">
+        <div class="community-header animate-in">
+          <div class="community-header__title">커뮤니티 💬</div>
+        </div>
+        <div class="segment-tabs animate-in" id="commTabs">
+          <div class="segment-tabs__item segment-tabs__item--active" onclick="commTab('posts',this)">후기</div>
+          <div class="segment-tabs__item" onclick="commTab('qa',this)">Q&amp;A</div>
+          <div class="segment-tabs__item" onclick="commTab('notice',this)">공지사항</div>
+        </div>
+        <div id="commPosts">
+          <div class="post-card animate-in"><div class="post-card__header"><div class="post-card__avatar" style="background:linear-gradient(135deg,#2F80ED,#3DD6C6);">김</div><div class="post-card__user-info"><div class="post-card__username">김민준 <span class="post-card__country-tag">🇦🇺 호주</span></div><div class="post-card__meta">3시간 전 · 워킹홀리데이</div></div></div><div class="post-card__title">호주 417 비자 연장 후기 — 지역 농장 88일 채우는 팁</div><div class="post-card__text">퀸즐랜드 케언즈에서 망고 농장 일했는데 생각보다 수월했어요. 고용주 레터 받는 방법이랑 세금 환급까지 정리해봤습니다...</div><div class="post-card__actions"><div class="post-card__action">❤️ 143</div><div class="post-card__action">💬 38</div><div class="post-card__action">🔖 저장</div></div></div>
+          <div class="post-card animate-in delay-1"><div class="post-card__header"><div class="post-card__avatar" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);">이</div><div class="post-card__user-info"><div class="post-card__username">이수연 <span class="post-card__country-tag">🇺🇸 미국</span></div><div class="post-card__meta">어제 · 취업비자</div></div></div><div class="post-card__title">H-1B 추첨 탈락 후 O-1A로 미국 IT 취업 성공한 이야기</div><div class="post-card__text">3년 연속 H-1B 탈락하고 O-1A 비범한 능력 비자로 방향 틀었습니다. 포트폴리오 준비부터 변호사 선택까지 공유합니다...</div><div class="post-card__actions"><div class="post-card__action">❤️ 287</div><div class="post-card__action">💬 61</div><div class="post-card__action">🔖 저장</div></div></div>
+          <div class="post-card animate-in delay-2"><div class="post-card__header"><div class="post-card__avatar" style="background:linear-gradient(135deg,#dc2626,#b91c1c);">박</div><div class="post-card__user-info"><div class="post-card__username">박지호 <span class="post-card__country-tag">🇨🇦 캐나다</span></div><div class="post-card__meta">2일 전 · 영주권</div></div></div><div class="post-card__title">캐나다 Express Entry CRS 450점대로 ITA 받은 전략</div><div class="post-card__text">IELTS 8.0, 캐나다 취업경험 1년 추가 후 PNP 노미니까지 활용했습니다. 단계별로 정리해드릴게요...</div><div class="post-card__actions"><div class="post-card__action">❤️ 195</div><div class="post-card__action">💬 52</div><div class="post-card__action">🔖 저장</div></div></div>
+          <div class="post-card animate-in delay-3"><div class="post-card__header"><div class="post-card__avatar" style="background:linear-gradient(135deg,#059669,#047857);">최</div><div class="post-card__user-info"><div class="post-card__username">최아린 <span class="post-card__country-tag">🇯🇵 일본</span></div><div class="post-card__meta">3일 전 · 취업비자</div></div></div><div class="post-card__title">일본 엔지니어 비자 — 한국에서 원격으로 취업 후기</div><div class="post-card__text">LinkedIn에서 일본어로 리크루터에게 DM을 보낸 게 시작이었어요. COE 신청까지 전 과정을 공유합니다...</div><div class="post-card__actions"><div class="post-card__action">❤️ 108</div><div class="post-card__action">💬 29</div><div class="post-card__action">🔖 저장</div></div></div>
+        </div>
+        <div id="commQA" style="display:none;padding:16px 0 8px;">
+          <div class="qa-card animate-in"><span class="qa-card__badge qa-card__badge--complete">답변완료</span><div class="qa-card__title">호주 워킹홀리데이 신청 시 잔액증명 기준이 어떻게 되나요?</div><div class="qa-card__meta">🇦🇺 호주 · 워킹홀리데이 · 조회 342</div></div>
+          <div class="qa-card animate-in delay-1"><span class="qa-card__badge qa-card__badge--waiting">답변대기</span><div class="qa-card__title">캐나다 Express Entry 프로필 등록 후 얼마나 기다려야 하나요?</div><div class="qa-card__meta">🇨🇦 캐나다 · 영주권 · 조회 215</div></div>
+          <div class="qa-card animate-in delay-2"><span class="qa-card__badge qa-card__badge--complete">답변완료</span><div class="qa-card__title">일본 워킹홀리데이 연장 조건과 방법이 궁금합니다</div><div class="qa-card__meta">🇯🇵 일본 · 워킹홀리데이 · 조회 178</div></div>
+        </div>
+        <div id="commNotice" style="display:none;padding:16px 24px;">
+          <div class="qa-card animate-in"><span class="qa-card__badge qa-card__badge--complete">업데이트</span><div class="qa-card__title">🇦🇺 호주 417 비자 신청 비용 AUD 635로 인상 (2024.07)</div><div class="qa-card__meta">2024.07.01</div></div>
+          <div class="qa-card animate-in delay-1"><span class="qa-card__badge qa-card__badge--waiting">주의</span><div class="qa-card__title">🇨🇦 캐나다 IEC 2025 쿼터 조기 마감 가능성 안내</div><div class="qa-card__meta">2025.01.15</div></div>
+          <div class="qa-card animate-in delay-2"><span class="qa-card__badge qa-card__badge--complete">업데이트</span><div class="qa-card__title">🇩🇪 독일 숙련직 이민법 개정 — 경험직 카드 신설 (2024)</div><div class="qa-card__meta">2024.11.01</div></div>
+        </div>
+      </div>
+
+      <!-- MY PAGE -->
+      <div id="screen-mypage" class="screen">
+        <section class="profile-header animate-in">
+          <div class="profile-header__avatar" id="profileAvatar">👤</div>
+          <h2 class="profile-header__name" id="profileName">로그인이 필요합니다</h2>
+          <p class="profile-header__handle" id="profileHandle">비자 준비 현황을 저장하세요</p>
+          <span class="profile-header__status" id="profileStatus">로그인 / 회원가입 →</span>
+        </section>
+        <div class="stats-row animate-in">
+          <div class="stat-item"><div class="stat-item__value">0</div><div class="stat-item__label">저장 국가</div></div>
+          <div class="stat-item"><div class="stat-item__value" id="myChecklistPct">0%</div><div class="stat-item__label">체크리스트</div></div>
+          <div class="stat-item"><div class="stat-item__value">0</div><div class="stat-item__label">작성 글</div></div>
+          <div class="stat-item"><div class="stat-item__value">0</div><div class="stat-item__label">저장 글</div></div>
+        </div>
+        <div class="settings-group animate-in delay-1">
+          <div class="settings-group__title">비자 준비</div>
+          <div class="settings-list">
+            <div class="settings-item" onclick="switchTab('checklist')"><div class="settings-item__left"><div class="settings-item__icon icon-blue">✅</div><div class="settings-item__label">내 체크리스트</div></div><span class="settings-item__arrow">›</span></div>
+            <div class="settings-item" onclick="switchTab('country')"><div class="settings-item__left"><div class="settings-item__icon icon-green">🗺️</div><div class="settings-item__label">관심 국가</div></div><span class="settings-item__arrow">›</span></div>
+            <div class="settings-item"><div class="settings-item__left"><div class="settings-item__icon icon-yellow">🔔</div><div class="settings-item__label">비자 변경 알림</div></div><div class="toggle toggle--active"></div></div>
+          </div>
+        </div>
+        <div class="settings-group animate-in delay-2">
+          <div class="settings-group__title">앱 정보</div>
+          <div class="settings-list">
+            <div class="settings-item"><div class="settings-item__left"><div class="settings-item__icon icon-yellow">📢</div><div class="settings-item__label">공지사항</div></div><span style="font-size:10px;background:#FFEBEE;color:#EB5757;padding:3px 7px;border-radius:5px;font-weight:700;">NEW</span></div>
+            <div class="settings-item"><div class="settings-item__left"><div class="settings-item__icon icon-green">📖</div><div class="settings-item__label">정보 출처 및 면책 고지</div></div><span class="settings-item__arrow">›</span></div>
+            <div class="settings-item"><div class="settings-item__left"><div class="settings-item__icon icon-red">⚠️</div><div class="settings-item__label">오류 제보</div></div><span class="settings-item__arrow">›</span></div>
+            <div class="settings-item"><div class="settings-item__left"><div class="settings-item__icon icon-purple">🚪</div><div class="settings-item__label settings-item__label--danger" onclick="logoutUser()">로그아웃</div></div></div>
+          </div>
+        </div>
+        <div style="height:8px;"></div>
+      </div>
+
+    </div><!-- end screen-content -->
+
+    <!-- TAB BAR -->
+    <nav class="tab-bar">
+      <div class="tab-bar__item tab-bar__item--active" id="tab-home" onclick="switchTab('home')">
+        <span class="tab-bar__icon">🌍</span><span class="tab-bar__label">탐색</span><div class="tab-bar__dot"></div>
+      </div>
+      <div class="tab-bar__item" id="tab-country" onclick="switchTab('country')">
+        <span class="tab-bar__icon">📋</span><span class="tab-bar__label">국가정보</span><div class="tab-bar__dot"></div>
+      </div>
+      <div class="tab-bar__item" id="tab-checklist" onclick="switchTab('checklist')">
+        <span class="tab-bar__icon">✅</span><span class="tab-bar__label">체크리스트</span><div class="tab-bar__dot"></div>
+      </div>
+      <div class="tab-bar__item" id="tab-community" onclick="switchTab('community')">
+        <span class="tab-bar__icon">💬</span><span class="tab-bar__label">커뮤니티</span><div class="tab-bar__badge"></div><div class="tab-bar__dot"></div>
+      </div>
+      <div class="tab-bar__item" id="tab-mypage" onclick="switchTab('mypage')">
+        <span class="tab-bar__icon">👤</span><span class="tab-bar__label">마이</span><div class="tab-bar__dot"></div>
+      </div>
+    </nav>
+  </div><!-- end mainApp -->
+
+</div><!-- end app-container -->
+
+<script>
+// ===================== STATE =====================
+const appState = {
+  currentScreen: 'home',
+  user: null, // { name, handle, avatar, provider }
+  checklist: {
+    groups: [
+      { title: '📄 기본 서류', items: [
+        { text: '여권 유효기간 확인', sub: '체류 기간 + 최소 6개월 이상', status: 'unchecked', tag: '필수' },
+        { text: '여권 규격 사진 준비', sub: '흰 배경 규격 사진 6~10장', status: 'unchecked', tag: '필수' },
+        { text: '주민등록등본 (영문) 발급', sub: '정부24 또는 주민센터 발급', status: 'unchecked', tag: '필수' },
+        { text: '범죄경력증명서 (영문)', sub: '경찰청 발급 · 아포스티유 인증 필요한 경우 있음', status: 'unchecked', tag: '필수' },
+      ]},
+      { title: '💰 재정 서류', items: [
+        { text: '잔액증명서 준비', sub: 'USD $3,000~$5,000 이상 (국가별 상이)', status: 'unchecked', tag: '필수' },
+        { text: '영문 은행 거래내역서', sub: '최근 3~6개월, 영문 발급', status: 'unchecked', tag: '필수' },
+        { text: '국제 신용/체크카드 발급', sub: 'VISA 또는 Mastercard, 해외 결제 가능 확인', status: 'unchecked', tag: '선택' },
+      ]},
+      { title: '🏥 건강 서류', items: [
+        { text: '건강검진 예약', sub: '호주·캐나다·미국 영주권은 지정 병원 신체검사 필수', status: 'unchecked', tag: '필수' },
+        { text: '여행자 보험 가입', sub: '의료비 USD $50,000 이상 커버 권장', status: 'unchecked', tag: '필수' },
+        { text: '예방접종 기록 확인', sub: '홍역·풍진 등 일부 국가 MMR 접종 요구', status: 'unchecked', tag: '선택' },
+      ]},
+      { title: '✈️ 출발 전 준비', items: [
+        { text: '항공권 예약', sub: '편도 또는 왕복 (국가별 입국 조건 확인)', status: 'unchecked', tag: '필수' },
+        { text: '현지 숙소 예약 (초기)', sub: '입국 시 주소 제시 필요, 2~4주 분 준비 권장', status: 'unchecked', tag: '필수' },
+      ]},
+    ]
+  }
+};
+
+// ===================== ONBOARDING =====================
+let obCurrent = 0;
+const OB_TOTAL = 3;
+
+function obNext() {
+  const btn = document.getElementById('obNextBtn');
+  if (obCurrent < OB_TOTAL - 1) {
+    // slide out current
+    const cur = document.getElementById('obSlide' + obCurrent);
+    cur.classList.remove('active');
+    cur.classList.add('out');
+    obCurrent++;
+    // slide in next
+    const next = document.getElementById('obSlide' + obCurrent);
+    next.classList.add('active');
+    // update dots
+    document.querySelectorAll('.ob-dot').forEach((d,i) => d.classList.toggle('active', i === obCurrent));
+    // last slide
+    if (obCurrent === OB_TOTAL - 1) btn.textContent = '로그인하러 가기';
+  } else {
+    showLogin();
+  }
+}
+
+function showLogin() {
+  document.getElementById('onboardingView').style.display = 'none';
+  document.getElementById('loginView').style.display = 'flex';
+}
+
+// ===================== LOGIN =====================
+const LOGIN_PROFILES = {
+  kakao:  { name: '카카오 사용자', handle: '@kakao_user', avatar: '🐱', status: '비자 준비 중' },
+  google: { name: 'Google 사용자', handle: '@google_user', avatar: '🔵', status: '비자 준비 중' },
+  apple:  { name: 'Apple 사용자', handle: '@apple_user', avatar: '🍎', status: '비자 준비 중' },
+  guest:  { name: '비회원', handle: '@guest', avatar: '👤', status: '비회원으로 둘러보는 중' },
+};
+
+function doLogin(provider) {
+  appState.user = LOGIN_PROFILES[provider];
+  document.getElementById('loginView').style.display = 'none';
+  const main = document.getElementById('mainApp');
+  main.classList.add('visible');
+  // update profile
+  updateProfileUI();
+  // init screens
+  initHome();
+  initCountry();
+  renderChecklist();
+  // greeting
+  const greeting = provider === 'guest'
+    ? '안녕하세요 👋'
+    : `안녕하세요, ${appState.user.name.split(' ')[0]}님 👋`;
+  document.getElementById('heroGreeting').textContent = greeting;
+}
+
+function updateProfileUI() {
+  const u = appState.user;
+  if (!u) return;
+  const avatar = document.getElementById('profileAvatar');
+  const name = document.getElementById('profileName');
+  const handle = document.getElementById('profileHandle');
+  const status = document.getElementById('profileStatus');
+  if (avatar) avatar.textContent = u.avatar;
+  if (name) name.textContent = u.name;
+  if (handle) handle.textContent = u.handle;
+  if (status) status.textContent = u.status;
+}
+
+function logoutUser() {
+  if (confirm('로그아웃 하시겠습니까?')) {
+    appState.user = null;
+    document.getElementById('mainApp').classList.remove('visible');
+    document.getElementById('loginView').style.display = 'flex';
+  }
+}
+
+// ===================== COUNTRY DATA =====================
+const VL = { wh:'워킹홀리데이', work:'취업비자', pr:'영주권', student:'학생비자' };
+const VTC = { wh:'tag-badge--wh', work:'tag-badge--work', pr:'tag-badge--pr', student:'tag-badge--student' };
+const POPULAR_IDS = ['australia','usa','japan','china','canada'];
+
+// Symbolic icons for each country (landmark / cultural symbol)
+const COUNTRY_SYMBOLS = {
+  australia: { icon: '🦘', cls: 'sym--au', label: '캥거루' },
+  usa:       { icon: '🗽', cls: 'sym--us', label: '자유의 여신상' },
+  japan:     { icon: '🗼', cls: 'sym--jp', label: '도쿄타워' },
+  china:     { icon: '🐉', cls: 'sym--cn', label: '용' },
+  canada:    { icon: '🍁', cls: 'sym--ca', label: '단풍잎' },
+  newzealand:{ icon: '🥝', cls: 'sym--nz', label: '키위' },
+  germany:   { icon: '🏰', cls: 'sym--de', label: '성' },
+  uk:        { icon: '🎡', cls: 'sym--gb', label: '런던아이' },
+  ireland:   { icon: '🍀', cls: 'sym--ie', label: '클로버' },
+  singapore: { icon: '🦁', cls: 'sym--sg', label: '멀라이언' },
+  france:    { icon: '🗼', cls: 'sym--fr', label: '에펠탑' },
+};
+
+const COUNTRIES = [
+  { id:'australia', flag:'🇦🇺', flagBg:'#00205B', name:'호주', nameEn:'Australia', region:'oceania', popular:true, capital:'캔버라', currency:'AUD', language:'영어', visaTypes:['wh','work','pr'], popularity:98,
+    visas:[
+      { name:'워킹홀리데이 (서브클래스 417)', status:'active', type:'wh', desc:'18~35세 한국 국적자 신청 가능. 오픈워크퍼밋. 지역 지정 사업장 취업 시 2·3차 비자 연장.', age:'18~35세', duration:'최대 3년', fee:'AUD 635', processing:'2~4주',
+        reqs:[{icon:'🎂',text:'<strong>연령:</strong> 18세 이상 35세 이하'},{icon:'💰',text:'<strong>잔액증명:</strong> AUD 5,000 이상'},{icon:'🏥',text:'<strong>의료보험:</strong> OSHC 또는 여행자보험'},{icon:'📋',text:'<strong>범죄경력:</strong> 무범죄 증명서'}],
+        warning:'1회만 신청 가능. 지역 농장·수산업·광업 88일 이상 근무 시 2차 비자 자격. 공식: immi.homeaffairs.gov.au' },
+      { name:'임시 기술 취업비자 (482)', status:'active', type:'work', desc:'고용주 스폰서 기술 취업비자. 직종이 SOL·MLTSSL에 포함되어야 함.', age:'제한 없음', duration:'2~4년', fee:'AUD 3,115~', processing:'1~4개월',
+        reqs:[{icon:'🏢',text:'<strong>스폰서:</strong> 인증 고용주(SMSF) 필요'},{icon:'📜',text:'<strong>기술 심사:</strong> 직종별 인증기관'},{icon:'🗣️',text:'<strong>영어:</strong> IELTS 5.0 이상'}],
+        warning:'MLTSSL 직종은 186 영주비자 연계 가능.' },
+      { name:'고용주 후원 영주비자 (186)', status:'active', type:'pr', desc:'고용주 후원 ENS 영주비자. Direct Entry 및 Transition 스트림.', age:'45세 미만', duration:'영구', fee:'AUD 4,640', processing:'6~12개월+',
+        reqs:[{icon:'🏢',text:'<strong>고용주 후원</strong>'},{icon:'📜',text:'<strong>기술 심사</strong>'},{icon:'🗣️',text:'<strong>영어:</strong> IELTS 6.0 이상'},{icon:'💼',text:'<strong>경력:</strong> 3년 이상'}],
+        warning:'Transition 스트림: 482 비자로 3년 근무 후 신청. 영주권 취득 후 4년 내 귀화 가능.' },
+    ]
+  },
+  { id:'usa', flag:'🇺🇸', flagBg:'#003087', name:'미국', nameEn:'United States', region:'america', popular:true, capital:'워싱턴 D.C.', currency:'USD', language:'영어', visaTypes:['work','pr'], popularity:94,
+    visas:[
+      { name:'H-1B 전문직 취업비자', status:'limited', type:'work', desc:'학사 이상 전문직 취업비자. 연 1회(4월) 추첨. 연간 쿼터 65,000개.', age:'제한 없음', duration:'3년 (최대 6년)', fee:'USD 730~2,460', processing:'3~6개월',
+        reqs:[{icon:'🎓',text:'<strong>학력:</strong> 학사 이상'},{icon:'🏢',text:'<strong>스폰서:</strong> 미국 내 고용주 필수'},{icon:'🎲',text:'<strong>추첨:</strong> 연 1회 CAP 추첨'}],
+        warning:'추첨제로 선발 보장 없음. 공식: uscis.gov' },
+      { name:'O-1 특기자 비자', status:'active', type:'work', desc:'비범한 능력 인정자. 추첨 없이 신청 가능. H-1B 탈락자에게 대안.', age:'제한 없음', duration:'최대 3년', fee:'USD 730', processing:'1~3개월',
+        reqs:[{icon:'🏆',text:'<strong>능력 입증:</strong> 수상, 저명한 역할, 고임금 등'},{icon:'🏢',text:'<strong>스폰서:</strong> 고용주 또는 에이전트'}],
+        warning:'이민 변호사와 함께 준비 권장.' },
+      { name:'취업이민 영주권 (EB-2/EB-3)', status:'limited', type:'pr', desc:'취업 기반 영주권. 한국 국적자 대기기간 짧은 편.', age:'제한 없음', duration:'영구', fee:'USD 1,440~', processing:'1~3년+',
+        reqs:[{icon:'🏢',text:'<strong>고용주 후원:</strong> PERM 노동인증'},{icon:'🎓',text:'<strong>학력:</strong> EB-2 석사 이상 / EB-3 학사 이상'}],
+        warning:'Visa Bulletin 우선순위 날짜 확인 필수.' },
+    ]
+  },
+  { id:'japan', flag:'🇯🇵', flagBg:'#bc002d', name:'일본', nameEn:'Japan', region:'asia', popular:true, capital:'도쿄', currency:'JPY', language:'일본어', visaTypes:['wh','work','pr'], popularity:91,
+    visas:[
+      { name:'워킹홀리데이 비자', status:'limited', type:'wh', desc:'18~30세 한국인 대상, 연간 10,000명 한도(선착순). 1년 체류.', age:'18~30세', duration:'1년 (최대 2년)', fee:'무료', processing:'2~4주',
+        reqs:[{icon:'🎂',text:'<strong>연령:</strong> 18~30세'},{icon:'💰',text:'<strong>잔액:</strong> 약 25만엔'},{icon:'📋',text:'<strong>범죄경력:</strong> 무범죄 증명서'}],
+        warning:'매년 4월 1일 선착순. 발행 후 3개월 내 입국.' },
+      { name:'고도전문직 비자 (포인트제)', status:'active', type:'work', desc:'학력·경력·연봉 포인트 70점 이상 취득. 재류기간 5년. 영주권 가속화.', age:'제한 없음', duration:'5년 (갱신)', fee:'무료', processing:'1~3개월',
+        reqs:[{icon:'🏆',text:'<strong>포인트:</strong> 70점 이상'},{icon:'🏢',text:'<strong>고용주:</strong> 일본 내 내정 필요'},{icon:'💴',text:'<strong>연봉:</strong> 통상 300만엔+'}],
+        warning:'3년 이상 취업 시 영주권(고도전문직 2호) 신청 가능. 포인트 계산기: moj.go.jp' },
+      { name:'엔지니어·인문지식·국제업무 비자', status:'active', type:'work', desc:'일본 가장 일반적인 취업비자. IT·기술직, 통역·번역, 해외영업 등.', age:'제한 없음', duration:'1~5년 (갱신)', fee:'약 3,000~6,000엔', processing:'1~3개월',
+        reqs:[{icon:'🎓',text:'<strong>학력:</strong> 대졸 이상 또는 실무 10년+'},{icon:'🏢',text:'<strong>COE:</strong> 고용주의 재류자격인정증명서 신청'}],
+        warning:'자격외활동허가 시 주 28시간 내 아르바이트 가능.' },
+    ]
+  },
+  { id:'china', flag:'🇨🇳', flagBg:'#de2910', name:'중국', nameEn:'China', region:'asia', popular:true, capital:'베이징', currency:'CNY', language:'중국어', visaTypes:['work','student'], popularity:82,
+    visas:[
+      { name:'Z 비자 (취업비자)', status:'active', type:'work', desc:'고용주가 인력자원사회보장부를 통해 취업허가증 발급. 입국 후 거류증 신청 필수.', age:'통상 18~60세', duration:'1~2년', fee:'USD 140 내외', processing:'2~8주',
+        reqs:[{icon:'📜',text:'<strong>취업허가서:</strong> 고용주가 발급'},{icon:'🎓',text:'<strong>학력:</strong> 학사 이상 + 2년 경력'},{icon:'📋',text:'<strong>범죄경력:</strong> 아포스티유 공증'}],
+        warning:'입국 후 15일 내 거류증 신청 필수.' },
+      { name:'X1 학생비자 (장기)', status:'active', type:'student', desc:'6개월 초과 학위 과정. 입학허가서와 JW202 또는 JW201 양식 필요.', age:'제한 없음', duration:'재학 기간', fee:'USD 140 내외', processing:'2~4주',
+        reqs:[{icon:'🎓',text:'<strong>입학허가서:</strong> 교육부 인가 대학 발급'},{icon:'📋',text:'<strong>JW양식:</strong> JW202 또는 JW201'}],
+        warning:'입학 후 30일 내 거류증 신청. 장학금: csc.edu.cn' },
+    ]
+  },
+  { id:'canada', flag:'🇨🇦', flagBg:'#d52b1e', name:'캐나다', nameEn:'Canada', region:'america', popular:true, capital:'오타와', currency:'CAD', language:'영어·프랑스어', visaTypes:['wh','work','pr'], popularity:89,
+    visas:[
+      { name:'IEC 워킹홀리데이', status:'limited', type:'wh', desc:'18~35세 대상. 오픈워크퍼밋 1년. 연간 쿼터 내 추첨(Pool)으로 선발.', age:'18~35세', duration:'1년', fee:'CAD 256', processing:'4~8주',
+        reqs:[{icon:'🎲',text:'<strong>풀 등록:</strong> IRCC 사이트 Pool 등록 후 추첨'},{icon:'💰',text:'<strong>잔액:</strong> CAD 2,500 이상'}],
+        warning:'공식: canada.ca/iec' },
+      { name:'Express Entry (연방 기술이민)', status:'active', type:'pr', desc:'CRS 점수 기반 추첨. FSW·FST·CEC 세 가지 프로그램.', age:'제한 없음', duration:'영구', fee:'CAD 1,365', processing:'6개월 내',
+        reqs:[{icon:'🗣️',text:'<strong>영어:</strong> IELTS CLB 7 이상 권장'},{icon:'💼',text:'<strong>경력:</strong> NOC 0/A/B급 1년 이상'},{icon:'🎓',text:'<strong>학력:</strong> ECA 해외학력 인증'}],
+        warning:'PNP 노미니 획득 시 CRS +600점 보너스.' },
+    ]
+  },
+  { id:'newzealand', flag:'🇳🇿', flagBg:'#00247d', name:'뉴질랜드', nameEn:'New Zealand', region:'oceania', popular:false, capital:'웰링턴', currency:'NZD', language:'영어', visaTypes:['wh','work'], popularity:78,
+    visas:[
+      { name:'워킹홀리데이 비자', status:'active', type:'wh', desc:'18~30세 대상, 23개월 체류. 동일 고용주 최대 12개월 근무.', age:'18~30세', duration:'23개월', fee:'NZD 210', processing:'1~2주',
+        reqs:[{icon:'🎂',text:'<strong>연령:</strong> 18~30세'},{icon:'💰',text:'<strong>잔액:</strong> NZD 4,200 이상'}],
+        warning:'공식: immigration.govt.nz' },
+    ]
+  },
+  { id:'germany', flag:'🇩🇪', flagBg:'#1a1a1a', name:'독일', nameEn:'Germany', region:'europe', popular:false, capital:'베를린', currency:'EUR', language:'독일어', visaTypes:['work','student'], popularity:74,
+    visas:[
+      { name:'구직자 비자 (Jobseeker Visa)', status:'active', type:'work', desc:'독일 내 구직 활동. 학사 이상 학위 소지자. 최대 6개월.', age:'제한 없음', duration:'최대 6개월', fee:'EUR 75', processing:'4~12주',
+        reqs:[{icon:'🎓',text:'<strong>학위 인증:</strong> anabin DB 확인'},{icon:'💰',text:'<strong>재정:</strong> 월 934유로 이상'}],
+        warning:'취업 성공 시 취업비자로 전환 가능.' },
+      { name:'숙련직 취업비자 (Skilled Worker)', status:'active', type:'work', desc:'2024년 개정 이민법으로 요건 완화. 고용주와 근로계약 체결 후 신청.', age:'제한 없음', duration:'최대 4년', fee:'EUR 75', processing:'1~3개월',
+        reqs:[{icon:'📜',text:'<strong>고용계약:</strong> 독일 고용주 서명 계약서'},{icon:'🎓',text:'<strong>학력/자격:</strong> 독일 인정 학위'}],
+        warning:'학위 없이도 5년 경력+EUR 43,992 이상 연봉으로 신청 가능 (Experience Card).' },
+    ]
+  },
+  { id:'uk', flag:'🇬🇧', flagBg:'#012169', name:'영국', nameEn:'United Kingdom', region:'europe', popular:false, capital:'런던', currency:'GBP', language:'영어', visaTypes:['work','student'], popularity:72,
+    visas:[
+      { name:'스킬드 워커 비자', status:'active', type:'work', desc:'허가 스폰서 고용주가 필요한 포인트 기반 취업비자.', age:'제한 없음', duration:'최대 5년', fee:'GBP 719~1,420', processing:'3주 (온라인)',
+        reqs:[{icon:'🏢',text:'<strong>스폰서:</strong> Licensed Sponsor 고용주'},{icon:'🗣️',text:'<strong>영어:</strong> IELTS B1 이상'},{icon:'💷',text:'<strong>연봉:</strong> 최소 GBP 26,200'}],
+        warning:'5년 거주 후 영주권(ILR) 신청 가능.' },
+    ]
+  },
+  { id:'ireland', flag:'🇮🇪', flagBg:'#169b62', name:'아일랜드', nameEn:'Ireland', region:'europe', popular:false, capital:'더블린', currency:'EUR', language:'영어', visaTypes:['wh','work'], popularity:66,
+    visas:[
+      { name:'워킹홀리데이 비자', status:'active', type:'wh', desc:'18~30세 한국인. 12개월 체류. 한국-아일랜드 양국 협정 기반.', age:'18~30세', duration:'12개월', fee:'EUR 100', processing:'4~8주',
+        reqs:[{icon:'🎂',text:'<strong>연령:</strong> 18~30세'},{icon:'💰',text:'<strong>잔액:</strong> EUR 3,000 이상'}],
+        warning:'공식: irishimmigration.ie. 연간 한도 있음.' },
+    ]
+  },
+  { id:'singapore', flag:'🇸🇬', flagBg:'#ef3340', name:'싱가포르', nameEn:'Singapore', region:'asia', popular:false, capital:'싱가포르', currency:'SGD', language:'영어', visaTypes:['work','pr'], popularity:70,
+    visas:[
+      { name:'Employment Pass (EP)', status:'active', type:'work', desc:'전문직·관리직 취업비자. 월 SGD 5,000+ (IT직 SGD 5,500+). COMPASS 점수제.', age:'제한 없음', duration:'최대 2년', fee:'SGD 105+225', processing:'3~8주',
+        reqs:[{icon:'💶',text:'<strong>최저 임금:</strong> SGD 5,000~5,500+ (분야별)'},{icon:'📊',text:'<strong>COMPASS:</strong> 40점 이상'}],
+        warning:'공식: mom.gov.sg' },
+    ]
+  },
+  { id:'france', flag:'🇫🇷', flagBg:'#002395', name:'프랑스', nameEn:'France', region:'europe', popular:false, capital:'파리', currency:'EUR', language:'프랑스어', visaTypes:['wh','work','student'], popularity:64,
+    visas:[
+      { name:'워킹홀리데이 비자 (PVT)', status:'active', type:'wh', desc:'18~30세 대상, 최대 2년. 한국-프랑스 청년 교류 협약 기반.', age:'18~30세', duration:'최대 2년', fee:'EUR 50', processing:'2~6주',
+        reqs:[{icon:'🎂',text:'<strong>연령:</strong> 18~30세'},{icon:'💰',text:'<strong>잔액:</strong> EUR 2,500 이상'}],
+        warning:'공식: france-visas.gouv.fr' },
+    ]
+  },
+];
+
+// ===================== RENDER HELPERS =====================
+function renderCountryCard(c) {
+  const sym = COUNTRY_SYMBOLS[c.id] || { icon: c.flag, cls: '', label: '' };
+  const badges = c.visaTypes.slice(0,2).map(v =>
+    `<span class="country-card__badge ${VTC[v]||''}">${VL[v]||v}</span>`
+  ).join('');
+  return `
+  <div class="country-card" onclick="openDetail('${c.id}')">
+    <div class="country-card__flag">${c.flag}</div>
+    <div class="country-card__symbol ${sym.cls}" title="${sym.label}">${sym.icon}</div>
+    <div class="country-card__name">${c.name}</div>
+    <div class="country-card__visa-wrap">${badges}</div>
+  </div>`;
+}
+
+function renderRankItem(c, i) {
+  const rc = i===1?'ranking-item__rank--gold':i===2?'ranking-item__rank--silver':i===3?'ranking-item__rank--bronze':'';
+  const tags = c.visaTypes.map(v=>`<span class="tag-badge ${VTC[v]||''}">${VL[v]||v}</span>`).join('');
+  return `<div class="ranking-item" onclick="openDetail('${c.id}')">
+    <div class="ranking-item__rank ${rc}">${i}</div>
+    <div class="ranking-item__flag">${c.flag}</div>
+    <div class="ranking-item__info">
+      <div class="ranking-item__header"><div class="ranking-item__name">${c.name}</div><div class="ranking-item__score">${c.popularity}점</div></div>
+      <div class="ranking-item__bar-bg"><div class="ranking-item__bar-fill" style="width:${c.popularity}%"></div></div>
+      <div class="ranking-item__tags">${tags}</div>
+    </div>
+  </div>`;
+}
+
+// ===================== INIT SCREENS =====================
+function initHome(list) {
+  list = list || COUNTRIES;
+  const s = document.getElementById('homeScroll');
+  if (s) s.innerHTML = list.filter(c=>c.popular).map(renderCountryCard).join('');
+  const r = document.getElementById('homeRanking');
+  if (r) r.innerHTML = [...list].sort((a,b)=>b.popularity-a.popularity).slice(0,8).map((c,i)=>renderRankItem(c,i+1)).join('');
+}
+
+function initCountry(list) {
+  list = list || COUNTRIES;
+  const pop = POPULAR_IDS;
+  const sp = document.getElementById('cPopular');
+  const so = document.getElementById('cOther');
+  const sf = document.getElementById('cFull');
+  if (sp) sp.innerHTML = list.filter(c=>pop.includes(c.id)).map(renderCountryCard).join('');
+  if (so) so.innerHTML = list.filter(c=>!pop.includes(c.id)).map(renderCountryCard).join('');
+  if (sf) sf.innerHTML = [...list].sort((a,b)=>b.popularity-a.popularity).map((c,i)=>renderRankItem(c,i+1)).join('');
+}
+
+// ===================== FILTERS =====================
+function filterHomeVisa(t, el) {
+  document.querySelectorAll('#homeFilters .filter-chip').forEach(c=>c.classList.remove('filter-chip--active'));
+  el.classList.add('filter-chip--active');
+  initHome(t==='all' ? COUNTRIES : COUNTRIES.filter(c=>c.visaTypes.includes(t)));
+}
+function filterHome(q) {
+  const l = q ? COUNTRIES.filter(c=>c.name.includes(q)||c.nameEn.toLowerCase().includes(q.toLowerCase())) : COUNTRIES;
+  initHome(l);
+}
+function filterCountry(q) {
+  const l = q ? COUNTRIES.filter(c=>c.name.includes(q)||c.nameEn.toLowerCase().includes(q.toLowerCase())) : COUNTRIES;
+  initCountry(l);
+}
+function filterRegion(r, el) {
+  document.querySelectorAll('#countryFilters .filter-chip').forEach(c=>c.classList.remove('filter-chip--active'));
+  el.classList.add('filter-chip--active');
+  initCountry(r==='all' ? COUNTRIES : COUNTRIES.filter(c=>c.region===r));
+}
+
+// ===================== COUNTRY DETAIL =====================
+function openDetail(id) {
+  const c = COUNTRIES.find(x=>x.id===id); if (!c) return;
+  document.getElementById('countryListView').style.display = 'none';
+  document.getElementById('countryDetailView').style.display = 'block';
+  switchTab('country');
+  const grad = `linear-gradient(135deg, ${c.flagBg}ee, ${c.flagBg}88)`;
+  const tabs = c.visas.map((v,i)=>
+    `<div class="sticky-nav__item${i===0?' sticky-nav__item--active':''}" onclick="dTab(${i},this)">${v.name.split('(')[0].trim().split(' ').slice(0,3).join(' ')}</div>`
+  ).join('');
+  const panels = c.visas.map((v,i) => {
+    const dc = v.type==='wh'?'dot--yellow':v.type==='pr'?'dot--green':v.type==='student'?'dot--mint':'dot--blue';
+    const reqs = v.reqs.map(r=>`<div class="req-row"><span class="req-row__icon">${r.icon}</span><span class="req-row__text">${r.text}</span></div>`).join('');
+    return `<div class="visa-detail-panel" id="vp${i}" style="${i?'display:none;':''}">
+      <div style="padding:16px 24px 0;">
+        <div class="visa-item">
+          <div class="visa-item__header">
+            <div class="visa-item__name"><div class="dot ${dc}"></div>${v.name}</div>
+            <span class="visa-item__status ${v.status==='active'?'status--active':'status--limited'}">${v.status==='active'?'운영중':'제한적'}</span>
+          </div>
+          <p style="margin-top:6px;font-size:13px;color:var(--color-text-sub);line-height:1.5;">${v.desc}</p>
+          <div class="visa-item__meta" style="margin-top:14px;">
+            <div class="meta-box"><div class="meta-box__label">대상 연령</div><div class="meta-box__value">${v.age}</div></div>
+            <div class="meta-box"><div class="meta-box__label">체류 기간</div><div class="meta-box__value">${v.duration}</div></div>
+            <div class="meta-box"><div class="meta-box__label">신청 비용</div><div class="meta-box__value">${v.fee}</div></div>
+            <div class="meta-box"><div class="meta-box__label">처리 기간</div><div class="meta-box__value">${v.processing}</div></div>
+          </div>
+          <button class="expand-btn" onclick="toggleR(this,'r${i}')">📋 신청 조건 보기 ▼</button>
+          <div class="visa-reqs" id="r${i}">${reqs}<div class="warning-box"><span>⚠️</span><span>${v.warning}</span></div></div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  const badges = c.visaTypes.map(v=>`<div class="pill">${VL[v]||v}</div>`).join('');
+  const sym = COUNTRY_SYMBOLS[c.id] || { icon: c.flag };
+  document.getElementById('countryDetailContent').innerHTML = `
+    <div class="country-hero" style="background:${grad};">
+      <button class="country-hero__back" onclick="closeDetail()">← 국가 목록으로</button>
+      <div>
+        <div class="country-hero__flag">${c.flag} <span style="font-size:36px;">${sym.icon}</span></div>
+        <div class="country-hero__title">${c.name}</div>
+        <div class="country-hero__sub">${c.nameEn}</div>
+        <div class="country-hero__badges">${badges}</div>
+      </div>
+    </div>
+    <div class="info-grid">
+      <div class="info-card"><div class="info-card__icon">🏙️</div><div class="info-card__label">수도</div><div class="info-card__value">${c.capital}</div></div>
+      <div class="info-card"><div class="info-card__icon">💱</div><div class="info-card__label">통화</div><div class="info-card__value">${c.currency}</div></div>
+      <div class="info-card info-card--wide"><div class="info-card__icon">🗣️</div><div class="info-card__label">공용어</div><div class="info-card__value" style="font-size:16px;">${c.language}</div></div>
+    </div>
+    <div style="padding:4px 24px 14px;"><div style="font-size:18px;font-weight:700;color:var(--color-text-main);">비자 종류</div></div>
+    <div class="sticky-nav">${tabs}</div>
+    ${panels}
+    <button class="cta-button" onclick="alert('공식 이민청 사이트로 이동합니다 (준비중)')">🌐 공식 이민청 사이트 바로가기</button>
+    <div style="height:16px;"></div>`;
+  document.getElementById('screen-country').scrollTop = 0;
+}
+
+function closeDetail() {
+  document.getElementById('countryListView').style.display = 'block';
+  document.getElementById('countryDetailView').style.display = 'none';
+  document.getElementById('screen-country').scrollTop = 0;
+}
+
+function dTab(idx, el) {
+  document.querySelectorAll('.sticky-nav__item').forEach(t=>t.classList.remove('sticky-nav__item--active'));
+  if (el) el.classList.add('sticky-nav__item--active');
+  document.querySelectorAll('.visa-detail-panel').forEach((p,i)=>p.style.display=i===idx?'block':'none');
+}
+
+function toggleR(btn, id) {
+  const b = document.getElementById(id); if (!b) return;
+  b.classList.toggle('open');
+  btn.textContent = b.classList.contains('open') ? '📋 신청 조건 닫기 ▲' : '📋 신청 조건 보기 ▼';
+}
+
+// ===================== CHECKLIST =====================
+function renderChecklist() {
+  const container = document.getElementById('checklistContent');
+  if (!container) return;
+  const groups = appState.checklist.groups;
+  let total = 0, done = 0;
+  groups.forEach(g => { g.items.forEach(it => { total++; if (it.status==='checked') done++; }); });
+  const pct = total ? Math.round(done/total*100) : 0;
+  const circ = 2 * Math.PI * 28;
+  const offset = circ - (circ * pct / 100);
+
+  const groupsHTML = groups.map((g, gi) => {
+    const gDone = g.items.filter(it=>it.status==='checked').length;
+    return `<div class="checklist-group">
+      <div class="checklist-group__title">${g.title} (${gDone}/${g.items.length} 완료)</div>
+      ${g.items.map((it, ii) => {
+        const cls = it.status==='checked'?'check-item--checked':it.status==='partial'?'check-item--partial':'';
+        const tagCls = it.tag==='필수'?'tag--required':it.tag==='긴급'?'tag--urgent':'tag--optional';
+        return `<div class="check-item ${cls}" onclick="toggleCheckItem(${gi},${ii})">
+          <div class="check-item__checkbox"></div>
+          <div class="check-item__text-group">
+            <div class="check-item__text">${it.text}</div>
+            <div class="check-item__sub">${it.sub||''}</div>
+          </div>
+          <span class="check-item__tag ${tagCls}">${it.tag}</span>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="checklist-header animate-in">
+      <h2 style="color:var(--color-text-main);">비자 준비 체크리스트</h2>
+      <div class="add-btn">+</div>
+    </div>
+    <div class="progress-card animate-in">
+      <div class="progress-ring">
+        <svg class="progress-ring__circle" viewBox="0 0 70 70">
+          <circle class="progress-ring__bg" cx="35" cy="35" r="28"/>
+          <circle class="progress-ring__fill" cx="35" cy="35" r="28" style="stroke-dashoffset:${offset};"/>
+        </svg>
+        <div class="progress-ring__text">${pct}%</div>
+      </div>
+      <div class="progress-info">
+        <div class="progress-info__title">${done}/${total}개 완료</div>
+        <div class="progress-info__subtitle">${pct===100?'모든 준비 완료! 🎉':`${total-done}개 남았어요!`}</div>
+      </div>
+    </div>
+    ${groupsHTML}
+    <div style="height:8px;"></div>`;
+
+  // update mypage stat
+  const mpct = document.getElementById('myChecklistPct');
+  if (mpct) mpct.textContent = pct + '%';
+}
+
+function toggleCheckItem(gi, ii) {
+  const item = appState.checklist.groups[gi].items[ii];
+  item.status = item.status === 'checked' ? 'unchecked' : 'checked';
+  renderChecklist();
+}
+
+// ===================== TAB NAV =====================
+function switchTab(name) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab-bar__item').forEach(t=>t.classList.remove('tab-bar__item--active'));
+  const sc = document.getElementById('screen-'+name);
+  const tb = document.getElementById('tab-'+name);
+  if (sc) { sc.classList.add('active'); sc.closest('.screen-content').scrollTop = 0; }
+  if (tb) tb.classList.add('tab-bar__item--active');
+  appState.currentScreen = name;
+  if (name === 'home') initHome();
+  if (name === 'country') initCountry();
+  if (name === 'checklist') renderChecklist();
+}
+
+// ===================== COMMUNITY TABS =====================
+function commTab(t, el) {
+  document.querySelectorAll('#commTabs .segment-tabs__item').forEach(x=>x.classList.remove('segment-tabs__item--active'));
+  if (el) el.classList.add('segment-tabs__item--active');
+  document.getElementById('commPosts').style.display = t==='posts'?'block':'none';
+  document.getElementById('commQA').style.display = t==='qa'?'block':'none';
+  document.getElementById('commNotice').style.display = t==='notice'?'block':'none';
+}
+</script>
+</body>
+</html>
